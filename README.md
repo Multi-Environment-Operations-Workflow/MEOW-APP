@@ -15,6 +15,6 @@ npm install
 
 2. And then run the command
 ```
-npm run dev
+npm run tauri dev
 ```
 - Good luck gamers
