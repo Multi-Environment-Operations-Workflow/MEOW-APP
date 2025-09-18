@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import "./connection-interface.css";
-
-async function gen_qr() {
-    await invoke("generate_qr_code")
-}
 
 function ConnectionInterface() {
-    const  [generate_qr_code] = useState("");
-    //const [name, setName] = useState("");
+    const [qrPath, setQrPath] = useState("");
+
+    useEffect(() => {
+        async function fetchQr() {
+            const path = await invoke("generate_qr_code");
+            setQrPath(path);
+        }
+        fetchQr();
+    }, []);
 
     return (
         <main className="container">
-            Hej {gen_qr()}
+            <h1>Hej</h1>
+            {qrPath && <img src={qrPath} alt="QR Code" />}
         </main>
     );
 }
