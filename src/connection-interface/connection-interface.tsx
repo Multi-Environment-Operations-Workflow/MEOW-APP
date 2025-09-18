@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
 function ConnectionInterface() {
-    const [qrPath, setQrPath] = useState("");
+    const [qrBase64, setQrBase64] = useState("");
 
     useEffect(() => {
         async function fetchQr() {
-            const path = await invoke("generate_qr_code");
-            setQrPath(path);
+            const base64 = await invoke("generate_qr_code");
+            setQrBase64(base64);
         }
         fetchQr();
     }, []);
@@ -15,7 +15,9 @@ function ConnectionInterface() {
     return (
         <main className="container">
             <h1>Hej</h1>
-            {qrPath && <img src={qrPath} alt="QR Code" />}
+            {qrBase64 && (
+                <img width="200px" src={`data:image/png;base64,${qrBase64}`} alt="QR Code" />
+            )}
         </main>
     );
 }

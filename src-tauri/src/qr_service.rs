@@ -1,16 +1,24 @@
 use qrcode::QrCode;
-use image::Luma;
+use image::{Luma, DynamicImage};
+use std::io::Cursor;
+use base64::Engine;
 
 #[tauri::command]
 pub fn generate_qr_code() -> String {
     let code = QrCode::new(b"01234567").unwrap();
 
-    // Render to image
-    let image = code.render::<Luma<u8>>().build();
+    // Render to Luma<u8> image buffer
+    let image_buffer = code.render::<Luma<u8>>().build();
 
-    // Save as PNG in app's resource directory
-    let path = "../src/assets/qr.png"; // adjust path as needed
-    image.save(path).unwrap();
+    // Convert ImageBuffer -> DynamicImage so we can call write_to
+    let dyn_img = DynamicImage::ImageLuma8(image_buffer);
 
-    path.to_string()
+    // Encode to PNG in memory
+    let mut buffer = Cursor::new(Vec::new());
+    dyn_img.write_to(&mut buffer, image::ImageFormat::Png).unwrap();
+
+    // Convert to base64
+    let base64_png = base64::engine::general_purpose::STANDARD.encode(buffer.into_inner());
+
+    base64_png
 }
