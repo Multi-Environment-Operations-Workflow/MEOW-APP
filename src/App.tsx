@@ -5,6 +5,7 @@ import ConnectionInterface from "./connection-interface/connection-interface.tsx
 export default function App() {
     return (
         <main>
+        <p>test</p>
         <Router>
             <nav>
                 <Link to="/">Home</Link> | <Link to="/connect">About</Link>
