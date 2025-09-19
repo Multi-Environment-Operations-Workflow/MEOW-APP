@@ -1,22 +1,23 @@
-import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 
-function ActivateMicrophone() {
-  const [message, setMessage] = useState("");
+/**
+ * Handles microphone recording logic for GUI.
+ * 'invoke' kalder rust funktionen. i libs.rs ---> tauri::generate_handler![microphone_fn::start_mic_recording
+ */
+const handleMicTest = async () => {
+  try {
+    await invoke('start_mic_recording');
+  } catch (e) {
+    alert('Failed to start microphone test: ' + e);
+  }
+};
 
-  const handleButtonClick = async () => {
-    await invoke("microphone_access");
-    console.log("Microphone function invoked!");
-    setMessage("Microphone activated successfully!");
-  };
-
+export default function ActivateMicrophone() {
   return (
-    <div>
-      <h1>Activate Microphone</h1>
-      <button onClick={handleButtonClick}>Activate Microphone</button>
-      {message && <p>{message}</p>}
-    </div>
+    <main className="container">
+      <button onClick={handleMicTest} style={{ margin: '1em', padding: '1em' }}>
+        Start Microphone Test
+      </button>
+    </main>
   );
 }
-
-export default ActivateMicrophone;
