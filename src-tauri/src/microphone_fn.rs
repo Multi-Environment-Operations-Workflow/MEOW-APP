@@ -12,6 +12,8 @@ use tauri::command;
 /// Call from frontend via `invoke("start_mic_recording")`.
 #[command] // This attribute makes the function callable from the frontend.
 pub fn start_mic_recording() -> Result<(), String> {
+    let bitestream = new_live_bitstream();
+    println!("Bitestream: {bitestream:?}", bitestream=bitestream.is_ok());
     // Vælg host + default input device
     let host = cpal::default_host();
     let input_device = host
