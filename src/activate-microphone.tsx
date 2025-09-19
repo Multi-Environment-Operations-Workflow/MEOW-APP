@@ -2,7 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 /**
  * Handles microphone recording logic for GUI.
- * 'invoke' kalder rust funktionen. i libs.rs ---> tauri::generate_handler![microphone_fn::start_mic_recording
+ * 'invoke' calls rust funktion. in libs.rs ---> tauri::generate_handler![microphone_fn::start_mic_recording
  */
 const handleMicTest = async () => {
   try {
