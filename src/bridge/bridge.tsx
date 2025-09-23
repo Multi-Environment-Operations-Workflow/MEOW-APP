@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useBridge } from "./bridgeContext";
 
 export default function Bridge() {
-  const {url, startBroker} = useBridge();
+  const {url, startBroker, handshake} = useBridge();
+  const [ip, setIp] = useState("")
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
@@ -19,6 +21,7 @@ export default function Bridge() {
           <p className="text-lg text-gray-700">{url}</p>
         </div>
       )}
+      <input onChange={(e) => setIp(e.target.value)} value={ip} onSubmit={()=> {handshake()}}/>
     </div>
   );
 }
