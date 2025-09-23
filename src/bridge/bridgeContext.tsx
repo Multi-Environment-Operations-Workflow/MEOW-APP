@@ -1,14 +1,21 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 type BridgeContextProviderProps = {
   children: React.ReactNode;
 };
 
-type BridgeContextType = {};
+type BridgeContextType = {
+  startBroker: () => Promise<void>;
+  handshake: () => Promise<void>;
+  url: string | null;
+  pc: RTCPeerConnection;
+};
+
 
 export const BridgeContext = createContext({} as BridgeContextType);
+export const useBridge = () => useContext(BridgeContext);
 
 export const BridgeContextProvider = ({
   children,
@@ -37,6 +44,7 @@ export const BridgeContextProvider = ({
   };
 
   const handshake = async () => {
+    //ToDo Look at whether ip is encoded in the offer
     if (url) {
       const offerRes = await fetch(url.concat("/init"), {
         method: "GET",
@@ -56,7 +64,7 @@ export const BridgeContextProvider = ({
   };
 
   return (
-    <BridgeContext.Provider value={{ startBroker, url, pc }}>
+    <BridgeContext.Provider value={{ startBroker, handshake, url, pc }}>
       {children}
     </BridgeContext.Provider>
   );

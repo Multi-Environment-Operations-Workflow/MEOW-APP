@@ -1,12 +1,7 @@
-import { invoke } from "@tauri-apps/api/core";
-import { useState } from "react";
+import { useBridge } from "./bridgeContext";
 
 export default function Bridge() {
-  const [url, setUrl] = useState<string | null>(null);
-
-  async function startServer() {
-
-  }
+  const {url, startBroker} = useBridge();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
@@ -14,7 +9,7 @@ export default function Bridge() {
 
       {!url ? (
         <button
-          onClick={startServer}
+          onClick={startBroker}
           className="px-6 py-3 bg-blue-600 text-white rounded-2xl shadow-lg hover:bg-blue-700"
         >
           Start Signaling Server

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
-import Offer from "./components/Offer.tsx";
 import Bridge from "./bridge/bridge.tsx";
+import { BridgeContextProvider } from "./bridge/bridgeContext.tsx";
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -15,7 +15,9 @@ function App() {
 
   return (
     <main className="container">
-      <Bridge />
+      <BridgeContextProvider>
+        <Bridge />
+      </BridgeContextProvider>
     </main>
   );
 }
