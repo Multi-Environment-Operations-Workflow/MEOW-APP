@@ -1,7 +1,7 @@
 mod bridge;
 mod qr_service;
 
-use crate::bridge::{start_server};
+use crate::bridge::start_websocket_server;
 use crate::qr_service::generate_qr_code;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -17,7 +17,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             generate_qr_code,
-            start_server,
+            start_websocket_server
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

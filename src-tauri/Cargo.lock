@@ -2847,9 +2847,11 @@ dependencies = [
 name = "meow-app"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "axum",
  "base64 0.22.1",
  "futures",
+ "futures-util",
  "image",
  "local-ip-address",
  "qrcode",
@@ -2861,6 +2863,8 @@ dependencies = [
  "tiny_http",
  "tokio",
  "tokio-stream",
+ "tokio-tungstenite",
+ "web-socket",
  "webrtc",
 ]
 
@@ -6103,6 +6107,16 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
+]
+
+[[package]]
+name = "web-socket"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4202f445611df275891e7575aa91b99ae4bedee6241af7020ce0a3c28cabc449"
+dependencies = [
+ "rand 0.8.5",
+ "tokio",
 ]
 
 [[package]]
