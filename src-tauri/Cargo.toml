@@ -29,7 +29,6 @@ tiny_http = "0.12"
 local-ip-address = "0.6.5"
 webrtc = "0.14.0"
 tokio = "1.47.1"
-axum = {version="0.8.4", features= ["ws"] }
 tokio-stream = "0.1.17"
 futures = "0.3.31"
 web-socket = "0.7.0"
