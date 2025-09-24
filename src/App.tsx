@@ -1,10 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./home/home.tsx";
 import ConnectionInterface from "./connection-interface/connection-interface.tsx";
+import Bridge from "./bridge/bridge.tsx";
 
-export default function App() {
+function App() {
     return (
         <main>
+        {Bridge()}
+        {ConnectionInterface()}
         <p>test</p>
         <Router>
             <nav>
@@ -18,3 +21,6 @@ export default function App() {
         </main>
     );
 }
+
+
+export default App;
