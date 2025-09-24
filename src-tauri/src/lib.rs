@@ -1,7 +1,9 @@
 mod bridge;
+mod microphone;
 mod qr_service;
 
 use crate::bridge::start_websocket_server;
+use crate::microphone::start_recording_with_timeout;
 use crate::qr_service::generate_qr_code;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -17,7 +19,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             generate_qr_code,
-            start_websocket_server
+            start_websocket_server,
+            start_recording_with_timeout,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
