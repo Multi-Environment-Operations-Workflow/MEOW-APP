@@ -7,7 +7,7 @@ use tokio::sync::Mutex;
 
 #[tauri::command]
 pub async fn start_websocket_server(on_event: Channel<String>) -> String {
-    let addr = "127.0.0.1:9001";
+    let addr = "0.0.0.0:9001";
 
     let listener = match TcpListener::bind(addr).await {
         Ok(l) => l,

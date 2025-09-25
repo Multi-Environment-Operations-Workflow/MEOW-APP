@@ -40,7 +40,7 @@ function ClientConnectSocket() {
                     type="text"
                     value={connectionString}
                     onChange={(event) => setConnectionString(event.target.value)}
-                    placeholder="ws://127.0.0.1:9001"
+                    placeholder="ws://0.0.0.0:9001"
                     className="mb-3 p-2 border border-gray-300 rounded"
                 />
                 <button
