@@ -3,13 +3,17 @@ on: [push, pull_request]
 
 jobs:
   test-linux:
-    # Use a Rust image if available to speed things up
     runs-on: ubuntu-latest
     container: rust:1-bookworm
+
+    defaults:
+      run:
+        working-directory: src-tauri
+
     steps:
       - uses: actions/checkout@v4
 
-      # React tests (only if web/ exists)
+      # React tests still happen in web/
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - name: JS tests
@@ -19,6 +23,5 @@ jobs:
           npm ci
           npm test -- --ci --watch=false
 
-      # Rust tests
       - name: Rust tests
         run: cargo test --all --locked --verbose
