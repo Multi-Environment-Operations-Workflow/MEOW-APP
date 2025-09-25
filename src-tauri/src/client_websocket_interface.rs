@@ -3,9 +3,15 @@ use tokio_tungstenite::{connect_async, tungstenite::{client::IntoClientRequest, 
 use futures_util::{SinkExt, StreamExt};
 
 #[tauri::command]
-pub async fn connect_to_websocket(connection_string: String, mut on_event: Channel<String>) {
-    let request = connection_string.into_client_request().unwrap();
-    let (mut stream, response) = connect_async(request).await.unwrap();
+pub async fn connect_to_websocket(connection_string: String, mut on_event: Channel<String>) -> Result<(), String> {
+    let request = match connection_string.into_client_request() {
+        Ok(req) => req,
+        Err(e) => return Err(format!("Invalid WebSocket URL: {}", e)),
+    };
+    let (mut stream, response) = match connect_async(request).await {
+        Ok(res) => res,
+        Err(e) => return Err(format!("Failed to connect: {}", e)),
+    };
 
     let message = "Hello from client!";
 
@@ -13,7 +19,7 @@ pub async fn connect_to_websocket(connection_string: String, mut on_event: Chann
     // Convert String -> Utf8Bytes and send
     if let Err(e) = stream.send(Message::Text(message.to_string().into())).await {
         eprintln!("Failed to send message: {}", e);
-        return;
+        return Err(format!("Failed to send message: {}", e));
     }
     
     println!("Sent: {}", message);
@@ -30,4 +36,5 @@ pub async fn connect_to_websocket(connection_string: String, mut on_event: Chann
             }
         }
     }
+    Ok(())
 }
