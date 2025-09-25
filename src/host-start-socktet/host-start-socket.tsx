@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {Channel, invoke} from "@tauri-apps/api/core";
 
-function Bridge() {
+function HostStartSocket() {
     const [websocketData, setWebsocketData] = useState("");
 
     // Create the channel
@@ -9,7 +9,7 @@ function Bridge() {
 
     // Handle incoming messages
     onEvent.onmessage = (message) => {
-        console.log("Received from backend:", message);
+        console.log("Received from frontend:", message);
         setWebsocketData(message);
     };
 
@@ -38,4 +38,4 @@ function Bridge() {
     );
 }
 
-export default Bridge;
+export default HostStartSocket;
