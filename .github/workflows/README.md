@@ -85,8 +85,17 @@ No secrets required for basic testing.
 ### Optional Configuration
 
 - **Android Emulator**: Set `android-emulator-test.if` to `true` for device testing
-- **Build Caching**: Automatically enabled for faster subsequent runs
-- **Artifact Retention**: Build outputs kept for 90 days
+- **Build Caching**: Automatically enabled with actions/cache@v4 for faster subsequent runs
+- **Artifact Retention**: Build outputs kept for 90 days with actions/upload-artifact@v4
+
+### Action Versions Used
+
+- ✅ `actions/checkout@v4` - Latest stable
+- ✅ `actions/upload-artifact@v4` - Fixed deprecation warnings
+- ✅ `actions/cache@v4` - Improved caching performance
+- ✅ `actions/setup-node@v4` - Node.js 18 support
+- ✅ `actions/setup-java@v4` - Java 17 support
+- ✅ `dtolnay/rust-toolchain@stable` - Latest Rust toolchain
 
 ## 📝 Workflow Status Badges
 
