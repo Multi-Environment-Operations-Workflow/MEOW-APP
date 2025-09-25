@@ -28,6 +28,7 @@ export function useVideoStream(onChunk: (chunk: Blob) => void) {
       .catch((err) => {
         console.error("Permission error:", err);
         setError("Camera or microphone access denied.");
+        requestCameraPermission();
       });
 
     return () => {
@@ -36,4 +37,22 @@ export function useVideoStream(onChunk: (chunk: Blob) => void) {
   }, [onChunk]);
 
   return { videoRef, error };
+}
+
+async function requestCameraPermission() {
+  try {
+    const status = await navigator.permissions.query({ name: "camera" as PermissionName });
+    console.log("Camera permission status:", status.state);
+
+    if (status.state === "denied") {
+      alert("Camera access was blocked. Please enable it in your browser/Tauri settings.");
+      return;
+    }
+
+    // Will trigger prompt if not yet granted
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    return stream;
+  } catch (err) {
+    console.error("Permission request failed:", err);
+  }
 }
