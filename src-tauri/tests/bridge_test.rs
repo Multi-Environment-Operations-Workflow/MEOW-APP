@@ -14,14 +14,13 @@ mod tests {
     async fn test_websocket_echo() {
         // Create a dummy channel that we won't actually check
         // This is just to satisfy the function signature
-        let (dummy_tx, _dummy_rx) = mpsc::unbounded_channel::<String>();
+        let (_dummy_tx, _dummy_rx) = mpsc::unbounded_channel::<String>();
         let dummy_channel = Channel::new(move |_response| -> tauri::Result<()> {
             Ok(()) // Do nothing with the channel events for this test
         });
 
         // Start the WebSocket server
-        let result = start_websocket_server(dummy_channel).await;
-        println!("Server start result: {}", result);
+        let _ = start_websocket_server(dummy_channel).await;
 
         // Give the server time to start listening
         sleep(Duration::from_millis(500)).await;
@@ -41,11 +40,9 @@ mod tests {
         match echo_result {
             Ok(Some(Ok(tokio_tungstenite::tungstenite::Message::Text(reply)))) => {
                 assert_eq!(reply.as_str(), msg);
-                println!("Received echo: {}", reply);
+                println!(" Received echo: {}", reply);
             }
-            _ => panic!("Did not receive expected echo message"),
+            _ =>{panic! (" Did not receive expected echo message");}
         }
-
-        println!("WebSocket echo test passed!");
     }
 }
