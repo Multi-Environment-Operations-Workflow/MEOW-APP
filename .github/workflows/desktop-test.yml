@@ -9,15 +9,14 @@ on:
 jobs:
   test-linux:
     runs-on: ubuntu-latest
+    container:
+      image: rust:1.75-slim-bookworm
+      options: --user root
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Install system dependencies (Linux)
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
+          apt-get update && apt-get install -y \
             libwebkit2gtk-4.1-dev \
             libgtk-3-dev \
             libayatana-appindicator3-dev \
@@ -27,21 +26,28 @@ jobs:
             build-essential \
             curl \
             wget \
-            file
+            file \
+            git \
+            ca-certificates \
+            gnupg \
+            lsb-release
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "npm"
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+          apt-get install -y nodejs
+
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Install Node.js dependencies
         run: npm ci
 
-      - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
+      - name: Verify Rust installation
+        run: |
+          rustc --version
+          cargo --version
+          rustup --version
 
       - name: Cache Rust dependencies
         uses: actions/cache@v4

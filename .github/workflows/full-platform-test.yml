@@ -12,21 +12,33 @@ jobs:
   desktop-tests:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
             platform: linux
+            container: rust:1.75-slim-bookworm
           - os: windows-latest
             platform: windows
 
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container || '' }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Install Linux dependencies (Container)
+        if: matrix.platform == 'linux' && matrix.container
+        run: |
+          apt-get update && apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libasound2-dev \
+            pkg-config \
+            build-essential \
+            git \
+            ca-certificates
 
-      - name: Install Linux dependencies
-        if: matrix.platform == 'linux'
+      - name: Install Linux dependencies (Host)
+        if: matrix.platform == 'linux' && !matrix.container
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -38,17 +50,34 @@ jobs:
             pkg-config \
             build-essential
 
-      - name: Setup Node.js
+      - name: Setup Node.js (Container)
+        if: matrix.container
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+          apt-get install -y nodejs
+
+      - name: Setup Node.js (Host)
+        if: "!matrix.container"
         uses: actions/setup-node@v4
         with:
           node-version: "18"
           cache: "npm"
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup Rust
+      - name: Setup Rust (Host only)
+        if: "!matrix.container"
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Verify Rust (Container)
+        if: matrix.container
+        run: |
+          rustc --version
+          cargo --version
 
       - name: Cache Rust dependencies
         uses: actions/cache@v4
