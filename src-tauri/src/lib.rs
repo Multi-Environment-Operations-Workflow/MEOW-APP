@@ -1,4 +1,4 @@
-mod bridge;
+pub mod bridge;
 mod microphone;
 mod qr_service;
 
