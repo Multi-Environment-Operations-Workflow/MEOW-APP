@@ -1,7 +1,7 @@
-use qrcode::QrCode;
-use image::{Luma, DynamicImage};
-use std::io::Cursor;
 use base64::Engine;
+use image::{DynamicImage, Luma};
+use qrcode::QrCode;
+use std::io::Cursor;
 
 #[tauri::command]
 pub fn generate_qr_code() -> String {
@@ -15,7 +15,9 @@ pub fn generate_qr_code() -> String {
 
     // Encode to PNG in memory
     let mut buffer = Cursor::new(Vec::new());
-    dyn_img.write_to(&mut buffer, image::ImageFormat::Png).unwrap();
+    dyn_img
+        .write_to(&mut buffer, image::ImageFormat::Png)
+        .unwrap();
 
     // Convert to base64
     let base64_png = base64::engine::general_purpose::STANDARD.encode(buffer.into_inner());
