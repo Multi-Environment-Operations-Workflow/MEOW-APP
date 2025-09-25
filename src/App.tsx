@@ -17,22 +17,20 @@ function App() {
 
     return (
         <main className="container">
-            {HostStartSocket()}
-            {ClientConnectSocket()}
-            {ActivateMicrophone()}
-            {ConnectionInterface()}
             <Router>
                 <nav>
                     <Link to="/">Home</Link> | <Link to="/connect">About</Link> |{" "}
                     <Link to="/host-socket">Host Socket</Link> |{" "}
-                    <Link to="/connect-socket">Connect socket</Link>
-                    <Link to="/microphone">microphone</Link>
+                    <Link to="/connect-socket">Connect socket</Link> |{" "}
+                    <Link to="/microphone">microphone</Link> |{" "}
+                    <Link to="/connection-interface">Connection interface</Link>
                 </nav>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/host-socket" element={<HostStartSocket />} />
                     <Route path="/connect-socket" element={<ClientConnectSocket />} />
                     <Route path="/microphone" element={<ActivateMicrophone />} />
+                    <Route path="/connection-interface" element={<ConnectionInterface/> } />
                 </Routes>
             </Router>
         </main>
