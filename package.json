@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-barcode-scanner": "^2.4.0",
     "@tauri-apps/plugin-opener": "^2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-qr-barcode-scanner": "^2.1.10",
     "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
