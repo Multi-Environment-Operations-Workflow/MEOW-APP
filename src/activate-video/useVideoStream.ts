@@ -1,35 +1,39 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function useVideoStream(onChunk: (chunk: Blob) => void) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let recorder: MediaRecorder;
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream; // preview
-      }
-
-      recorder = new MediaRecorder(stream, {
-        mimeType: "video/webm; codecs=vp8,opus",
-      });
-
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          onChunk(event.data); // pass chunk to consumer
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
         }
-      };
 
-      recorder.start(500); // send ~2 chunks per second
-      mediaRecorderRef.current = recorder;
-    });
+        recorder = new MediaRecorder(stream, {
+          mimeType: "video/webm; codecs=vp8,opus",
+        });
+
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            onChunk(event.data);
+          }
+        };
+
+        recorder.start(500);
+      })
+      .catch((err) => {
+        console.error("Permission error:", err);
+        setError("Camera or microphone access denied.");
+      });
 
     return () => {
       recorder?.stop();
     };
   }, [onChunk]);
 
-  return { videoRef };
+  return { videoRef, error };
 }
