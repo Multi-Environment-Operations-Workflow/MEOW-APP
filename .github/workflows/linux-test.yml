@@ -1,0 +1,24 @@
+name: linux-test
+on: [push, pull_request]
+
+jobs:
+  test-linux:
+    # Use a Rust image if available to speed things up
+    runs-on: ubuntu-latest
+    container: rust:1-bookworm
+    steps:
+      - uses: actions/checkout@v4
+
+      # React tests (only if web/ exists)
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: JS tests
+        if: hashFiles('web/package.json') != ''
+        working-directory: web
+        run: |
+          npm ci
+          npm test -- --ci --watch=false
+
+      # Rust tests
+      - name: Rust tests
+        run: cargo test --all --locked --verbose
