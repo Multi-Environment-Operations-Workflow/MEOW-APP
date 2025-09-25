@@ -29,6 +29,21 @@ pub fn run() {
             start_websocket_server,
             start_recording_with_timeout,
         ])
+        .on_page_load(|window, _payload| {
+            #[cfg(target_os = "linux")]
+            {
+                let webview = window.webview();
+                if let Some(webview) = webview {
+                    // Enable camera permissions
+                    webview.connect_permission_request(move |request| {
+                        if request.request_type() == tauri::api::webview::PermissionType::Media {
+                            println!("Media permission requested: {:?}", request);
+                            request.allow();
+                        }
+                    });
+                }
+            };
+        })
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("error while running tauri application")
 }

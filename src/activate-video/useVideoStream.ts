@@ -49,7 +49,6 @@ async function requestCameraPermission() {
       return;
     }
 
-    // Will trigger prompt if not yet granted
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     return stream;
   } catch (err) {

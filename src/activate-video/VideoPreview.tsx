@@ -1,10 +1,8 @@
 import { useVideoStream } from "./useVideoStream";
 
 const VideoPreview = () => {
-  // Here we just ignore chunks (or log them),
-  // since we only want live preview.
   const { videoRef } = useVideoStream((chunk) => {
-    console.log("Got chunk:", chunk);
+    //Insert logic for handling video chunks here
   });
 
   return (
