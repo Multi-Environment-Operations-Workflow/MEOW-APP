@@ -15,7 +15,7 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux
-            container: rust:1.75-slim-bookworm
+            container: rust:1.89-slim-bookworm
           - os: windows-latest
             platform: windows
 
@@ -57,7 +57,7 @@ jobs:
           apt-get install -y nodejs
 
       - name: Setup Node.js (Host)
-        if: "!matrix.container"
+        if: ${{ !matrix.container }}
         uses: actions/setup-node@v4
         with:
           node-version: "18"
@@ -70,8 +70,8 @@ jobs:
         run: npm ci
 
       - name: Setup Rust (Host only)
-        if: "!matrix.container"
-        uses: dtolnay/rust-toolchain@stable
+        if: ${{ !matrix.container }}
+        uses: dtolnay/rust-toolchain@1.89
 
       - name: Verify Rust (Container)
         if: matrix.container
@@ -87,6 +87,16 @@ jobs:
             ~/.cargo/git
             src-tauri/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Handle Cargo.lock compatibility
+        run: |
+          cd src-tauri
+          # Check if Cargo.lock is compatible, regenerate if needed
+          cargo check --no-default-features || {
+            echo "Cargo.lock incompatible, regenerating..."
+            rm -f Cargo.lock
+            cargo generate-lockfile --offline || cargo generate-lockfile
+          }
 
       - name: Run tests
         run: |
@@ -114,7 +124,7 @@ jobs:
         run: npm ci
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@1.89
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -129,6 +139,16 @@ jobs:
         run: |
           rustup target add aarch64-linux-android armv7-linux-androideabi
           cargo install cargo-ndk
+
+      - name: Handle Cargo.lock compatibility
+        run: |
+          cd src-tauri
+          # Check if Cargo.lock is compatible, regenerate if needed
+          cargo check --no-default-features || {
+            echo "Cargo.lock incompatible, regenerating..."
+            rm -f Cargo.lock
+            cargo generate-lockfile --offline || cargo generate-lockfile
+          }
 
       - name: Test Android compatibility
         run: |

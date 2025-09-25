@@ -25,7 +25,7 @@ jobs:
 
       - name: Install Rust
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.89
           echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
           source $HOME/.cargo/env
           rustup default stable
@@ -71,6 +71,17 @@ jobs:
           restore-keys: |
             android-cargo-
 
+      - name: Handle Cargo.lock compatibility
+        run: |
+          source $HOME/.cargo/env
+          cd src-tauri
+          # Check if Cargo.lock is compatible, regenerate if needed
+          cargo check --no-default-features || {
+            echo "Cargo.lock incompatible, regenerating..."
+            rm -f Cargo.lock
+            cargo generate-lockfile --offline || cargo generate-lockfile
+          }
+
       - name: Check if Tauri is configured for Android
         run: |
           if [ -f "src-tauri/gen/android/app/build.gradle" ]; then
@@ -82,6 +93,7 @@ jobs:
 
       - name: Run Android-compatible Rust tests
         run: |
+          source $HOME/.cargo/env
           cd src-tauri
           # Run tests that don't require desktop-specific features
           # Skip tests that use WebView2 or Linux-specific dependencies

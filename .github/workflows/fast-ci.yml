@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  RUST_VERSION: "1.75"
+  RUST_VERSION: "1.89"
   NODE_VERSION: "18"
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
   linux-fast:
     runs-on: ubuntu-latest
     container:
-      image: rust:1.75-slim-bookworm
+      image: rust:1.89-slim-bookworm
       options: --user root
 
     steps:
@@ -58,6 +58,16 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Handle Cargo.lock compatibility
+        run: |
+          cd src-tauri
+          # Check if Cargo.lock is compatible, regenerate if needed
+          cargo check --no-default-features || {
+            echo "Cargo.lock incompatible, regenerating..."
+            rm -f Cargo.lock
+            cargo generate-lockfile --offline || cargo generate-lockfile
+          }
 
       - name: Run tests
         run: |
@@ -128,6 +138,17 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Handle Cargo.lock compatibility
+        run: |
+          source ~/.cargo/env
+          cd src-tauri
+          # Check if Cargo.lock is compatible, regenerate if needed
+          cargo check --no-default-features || {
+            echo "Cargo.lock incompatible, regenerating..."
+            rm -f Cargo.lock
+            cargo generate-lockfile --offline || cargo generate-lockfile
+          }
+
       - name: Test Android compatibility
         run: |
           source ~/.cargo/env
@@ -160,9 +181,7 @@ jobs:
           cache: "npm"
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
+        uses: dtolnay/rust-toolchain@1.89
 
       - name: Cache dependencies
         uses: actions/cache@v4

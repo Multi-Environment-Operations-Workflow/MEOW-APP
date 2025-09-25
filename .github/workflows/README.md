@@ -12,7 +12,7 @@ This directory contains GitHub Actions workflows to test the MEOW-APP on differe
 **What it does**:
 
 - ⚡ Uses pre-built Docker images with Rust/Android tools
-- ✅ Linux: `rust:1.75-slim-bookworm` container
+- ✅ Linux: `rust:1.89-slim-bookworm` container
 - ✅ Android: `cimg/android:2024.01.1` container
 - ✅ Windows: GitHub runners (fastest for Windows)
 - ✅ Optimized caching and dependency management
@@ -135,21 +135,34 @@ Add these to your README.md:
 
 ### Common Issues
 
+**Cargo.lock Version Mismatch**:
+
+```
+error: lock file version `4` was found, but this version of Cargo does not understand this lock file
+```
+
+- **Cause**: Cargo.lock generated with newer Cargo version than container
+- **Solution**: All workflows now include automatic Cargo.lock regeneration
+- **Prevention**: Use consistent Rust 1.89+ across all environments
+
 **Linux Build Fails**:
 
 - Check if all system dependencies are installed
 - Verify WebKit version compatibility
+- Ensure container uses `rust:1.89-slim-bookworm` or newer
 
 **Windows Build Fails**:
 
 - Ensure WebView2 runtime compatibility
 - Check Windows SDK version
+- Verify Rust 1.89 compatibility
 
 **Android Build Fails**:
 
 - Verify NDK version (25.1.8937393)
 - Check Rust target installation
 - Ensure Java 17 compatibility
+- Verify Rust 1.89 with Android NDK compatibility
 
 ### Debugging Steps
 
