@@ -1,4 +1,4 @@
-name: Windows Test Suite
+name: windows-test
 on: [push, pull_request]
 
 jobs:
@@ -6,9 +6,17 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: src-tauri
+        working-directory: src-tauri # This is because this is where Cargo.toml is
     steps:
       - uses: actions/checkout@v4
 
-      - name: Rust tests
-        run: cargo test --all --locked --verbose
+      # Rust tests (only files inside src-tauri/tests/, fail on warnings)
+      - name: Rust tests (warnings = errors)
+        env:
+          RUSTFLAGS: "-D warnings"
+        shell: pwsh
+        run: |
+          Get-ChildItem tests -Filter *.rs | ForEach-Object {
+            $name = $_.BaseName
+            cargo test --test $name --locked --verbose
+          }
