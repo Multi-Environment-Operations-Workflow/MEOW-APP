@@ -1,4 +1,4 @@
-name: windows-app-does-run
+name: windows-doesrun
 on: [push, pull_request]
 
 jobs:
