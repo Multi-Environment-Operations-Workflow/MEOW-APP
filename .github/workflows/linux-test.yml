@@ -4,14 +4,14 @@ on: [push, pull_request]
 jobs:
   test-linux:
     runs-on: ubuntu-latest
-    container: rust:1-bookworm
+    container: rust:1-bookworm # Use the official Rust image with Debian Bookworm. So we dont need to install rust
     defaults:
       run:
-        working-directory: src-tauri
+        working-directory: src-tauri # This is because this is where Cargo.toml is
     steps:
       - uses: actions/checkout@v4
 
-      # ---- Linux GUI deps for gtk/gdk/tauri ----
+      # ---- Linux GUI deps for gtk/gdk/tauri An image including this does not exist yet to our knowlegde----
       - name: Install system deps (GTK/WebKit)
         run: |
           apt-get update
@@ -26,8 +26,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - name: JS tests
-        if: hashFiles('web/package.json') != ''
-        working-directory: web
+        if: hashFiles('package.json') != ''
+        working-directory: .
         run: |
           npm ci
           npm test -- --ci --watch=false

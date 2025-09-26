@@ -4,32 +4,6 @@ This directory contains GitHub Actions workflows to test the MEOW-APP on differe
 
 ## 📁 Workflow Files
 
-### 1. `fast-ci.yml` - ⚡ Optimized CI/CD (Recommended)
-
-**Triggers**: Push to main branches, Pull Requests, Manual dispatch  
-**Platforms**: Linux (Container), Windows, Android (Container)  
-**Performance**: ~60% faster than standard workflows  
-**What it does**:
-
-- ⚡ Uses pre-built Docker images with Rust/Android tools
-- ✅ Linux: `rust:1.89-slim-bookworm` container
-- ✅ Android: `cimg/android:2024.01.1` container
-- ✅ Windows: GitHub runners (fastest for Windows)
-- ✅ Optimized caching and dependency management
-- ✅ Comprehensive build summary with performance metrics
-
-### 2. `desktop-test.yml` - Desktop Platform Testing
-
-**Triggers**: Push to main branches, Pull Requests  
-**Platforms**: Linux (Container), Windows  
-**What it does**:
-
-- ✅ Container-based Linux builds for faster setup
-- ✅ Installs system dependencies (Linux WebKit, ALSA, etc.)
-- ✅ Runs Rust tests with `cargo test --no-default-features`
-- ✅ Builds Tauri desktop applications
-- ✅ Uploads build artifacts (AppImage, DEB, MSI, EXE)
-
 ### 3. `android-test.yml` - Android Platform Testing
 
 **Triggers**: Push to main branches, Pull Requests  
@@ -42,17 +16,6 @@ This directory contains GitHub Actions workflows to test the MEOW-APP on differe
 - ✅ Tests Android compilation compatibility
 - ✅ Builds Android APK (if configured)
 - ⚠️ Includes optional emulator testing (disabled by default)
-
-### 4. `full-platform-test.yml` - Complete Cross-Platform Suite
-
-**Triggers**: Push to main/develop, Pull Requests, Manual dispatch  
-**Platforms**: Linux, Windows, Android  
-**What it does**:
-
-- ✅ Matrix strategy with container/host configurations
-- ✅ Runs all desktop and mobile tests in parallel
-- ✅ Generates comprehensive test summary
-- ✅ Shows overall platform compatibility status
 
 ## 🚀 How to Use
 
