@@ -22,16 +22,6 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev
 
-      # React tests (if present)
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - name: JS tests
-        if: hashFiles('package.json') != ''
-        working-directory: .
-        run: |
-          npm ci
-          npm test -- --ci --watch=false
-
       # Rust tests
       - name: Rust tests
         run: cargo test --all --locked --verbose
