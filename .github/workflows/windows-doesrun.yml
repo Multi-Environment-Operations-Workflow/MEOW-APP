@@ -2,24 +2,22 @@ name: windows-doesrun
 on: [push, pull_request]
 
 jobs:
-  windows-app-does-run:
+  smoke:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: src-tauri # This is because this is where Cargo.toml is
+        working-directory: src-tauri
     steps:
       - uses: actions/checkout@v4
 
-      # Build the Tauri app
-      - name: Build Tauri app
-        shell: pwsh
-        run: |
-          cargo build --release
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
 
-      # Run the built app in the background and kill it after 10 seconds
-      - name: Run Tauri app and verify it starts
-        shell: pwsh
-        run: |
-          Start-Process -FilePath .\target\release\meow.exe
-          Start-Sleep -Seconds 10
-          Get-Process meow | Stop-Process
+      - name: Build + run
+        env:
+          RUSTFLAGS: "-D warnings"
+        run: cargo run --release --locked --verbose
