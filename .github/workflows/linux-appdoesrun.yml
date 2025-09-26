@@ -21,7 +21,8 @@ jobs:
             libwebkit2gtk-4.1-dev \
             libayatana-appindicator3-dev \
             librsvg2-dev \
-            xvfb
+            xvfb\
+            xauth
 
       - name: Smoke run (build + start app, fail on warnings)
         env:
