@@ -46,8 +46,8 @@ pub async fn start_websocket_server(on_event: Channel<String>) -> String {
                                 }
 
                                 let text = newmsg.to_text().unwrap_or("").to_string();
-                                let mut on_event = on_event.lock().await;
-                                on_event.send(text);
+                                let on_event = on_event.lock().await;
+                                let _ = on_event.send(text);
                             }
                         }
                         Err(e) => {

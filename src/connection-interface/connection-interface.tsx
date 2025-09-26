@@ -12,13 +12,13 @@ function ConnectionInterface() {
     const [qrInfo, setQrInfo] = useState("");
     const [scanning, setScanning] = useState(false);
 
-    useEffect(() => {
-        async function fetchQr() {
-            const base64 = await invoke("generate_qr_code");
-            setQrBase64(base64);
-        }
-        fetchQr();
-    }, []);
+  useEffect(() => {
+    async function fetchQr() {
+      const base64 = await invoke<string>("generate_qr_code");
+      setQrBase64(base64);
+    }
+    fetchQr();
+  }, []);
 
     async function scanQr() {
         await requestPermissions();
