@@ -24,7 +24,9 @@ jobs:
             librsvg2-dev
 
       # Rust tests (only files inside src-tauri/tests/)
-      - name: Rust tests
+      - name: Rust tests (warnings = errors)
+        env:
+          RUSTFLAGS: "-D warnings"
         run: |
           for t in tests/*.rs; do
             name=$(basename "$t" .rs)
