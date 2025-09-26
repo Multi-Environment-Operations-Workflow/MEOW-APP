@@ -1,0 +1,25 @@
+name: windows-app-does-run
+on: [push, pull_request]
+
+jobs:
+  windows-app-does-run:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: src-tauri # This is because this is where Cargo.toml is
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build the Tauri app
+      - name: Build Tauri app
+        shell: pwsh
+        run: |
+          cargo build --release
+
+      # Run the built app in the background and kill it after 10 seconds
+      - name: Run Tauri app and verify it starts
+        shell: pwsh
+        run: |
+          Start-Process -FilePath .\target\release\meow.exe
+          Start-Sleep -Seconds 10
+          Get-Process meow | Stop-Process
