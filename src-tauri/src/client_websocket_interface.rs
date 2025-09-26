@@ -3,12 +3,12 @@ use tokio_tungstenite::{connect_async, tungstenite::{client::IntoClientRequest, 
 use futures_util::{SinkExt, StreamExt};
 
 #[tauri::command]
-pub async fn connect_to_websocket(connection_string: String, mut on_event: Channel<String>) -> Result<(), String> {
+pub async fn connect_to_websocket(connection_string: String, on_event: Channel<String>) -> Result<(), String> {
     let request = match connection_string.into_client_request() {
         Ok(req) => req,
         Err(e) => return Err(format!("Invalid WebSocket URL: {}", e)),
     };
-    let (mut stream, response) = match connect_async(request).await {
+    let (mut stream, _res) = match connect_async(request).await {
         Ok(res) => res,
         Err(e) => return Err(format!("Failed to connect: {}", e)),
     };
@@ -37,4 +37,9 @@ pub async fn connect_to_websocket(connection_string: String, mut on_event: Chann
         }
     }
     Ok(())
+}
+
+
+pub async fn file_sharing () {
+
 }

@@ -1,66 +1,42 @@
-use tokio::net::TcpListener;
-use tokio_tungstenite::accept_async;
-use futures_util::{StreamExt, SinkExt};
-use tauri::ipc::Channel;
-use std::sync::Arc;
-use tokio::sync::Mutex;
+use tauri::{async_runtime::Receiver, ipc::Channel};
+use tokio_websocket_server::socket::{WebSocketMessage, WebsocketServer};
 
 #[tauri::command]
-pub async fn start_websocket_server(on_event: Channel<String>) -> String {
-    let addr = "0.0.0.0:9001";
+pub async fn start_websocket_server(on_event: Channel<String>) {
+    let hostname = "0.0.0.0";
+    let port = "9001";
+    let ws_server =  WebsocketServer::new(hostname.to_string(), port.to_string(), None, None);
+    
 
-    let listener = match TcpListener::bind(addr).await {
-        Ok(l) => l,
-        Err(e) => return format!("Failed to bind to {}: {}", addr, e),
-    };
-
-    let on_event = Arc::new(Mutex::new(on_event));
+    let ws_sender = ws_server.clone();
+    let message_receiver = ws_server.start().await;
 
     tokio::spawn(async move {
-        println!("WebSocket server listening on {}", addr);
-
-        while let Ok((stream, _)) = listener.accept().await {
-            let on_event = Arc::clone(&on_event);
-
-            tokio::spawn(async move {
-                let ws_stream = match accept_async(stream).await {
-                    Ok(ws) => ws,
-                    Err(e) => {
-                        eprintln!("WebSocket handshake failed: {}", e);
-                        return;
-                    }
-                };
-
-                println!("New WebSocket connection established");
-
-                let (mut write, mut read) = ws_stream.split();
-
-                while let Some(msg) = read.next().await {
-                    match msg {
-                        Ok(msg) => {
-                            if msg.is_text() || msg.is_binary() {
-                                let newmsg = msg.clone();
-                                if let Err(e) = write.send(msg).await {
-                                    eprintln!("Failed to send message: {}", e);
-                                    break;
-                                }
-
-                                let text = newmsg.to_text().unwrap_or("").to_string();
-                                let on_event = on_event.lock().await;
-                                on_event.send(text);
-                            }
-                        }
-                        Err(e) => {
-                            eprintln!("Error reading message: {}", e);
-                            break;
-                        }
-                    }
-                }
-
-                println!("WebSocket connection closed");
-            });
-        }
+        handle_websocket_messages(message_receiver, ws_sender).await;
     });
 
-    format!("WebSocket server started on {}", addr)
+    let s = format!(
+        "WebSocket server started on http://{host}:{port}",
+        host = hostname,
+        port = port
+    );
+    println!("{}", s);
+    on_event.send(s);
+}
+
+
+async fn handle_websocket_messages(mut message_receiver: Receiver<(String, WebSocketMessage)>, ws_sender: WebsocketServer) {
+    while let Some((client_id, message)) = message_receiver.recv().await {
+        match message {
+            WebSocketMessage::Text(text) => {
+                println!("Received from {}: {}", client_id, text);
+                
+                // Echo the message back
+                let response = WebSocketMessage::Text(format!("Echo: {}", text));
+                ws_sender.send_to_client(client_id, response).await.unwrap();
+            },
+            // Handle other message types...
+            _ => {}
+        }
+    }
 }

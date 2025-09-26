@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./home/home.tsx";
 import ConnectionInterface from "./connection-interface/connection-interface.tsx";
@@ -8,13 +6,6 @@ import HostStartSocket from "./host-start-socktet/host-start-socket.tsx";
 import ClientConnectSocket from "./host-client-socket/client-connect-socket.tsx";
 
 function App() {
-    const [_greetMsg, setGreetMsg] = useState("");
-    const [name, _setName] = useState("");
-
-    async function greet() {
-        setGreetMsg(await invoke("greet", { name }));
-    }
-
     return (
         <main className="container">
             <Router>

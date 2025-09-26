@@ -3,7 +3,7 @@ import {Channel, invoke} from "@tauri-apps/api/core";
 
 function ClientConnectSocket() {
     const [websocketData, setWebsocketData] = useState("");
-    const [connectionString, setConnectionString] = useState("ws://127.0.0.1:9001");
+    const [connectionString, setConnectionString] = useState("");
     const [error, setError] = useState<string | null>(null);
 
     const onEvent = useMemo(() => {

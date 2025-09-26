@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import {
     scan,
@@ -14,7 +14,7 @@ function ConnectionInterface() {
 
     useEffect(() => {
         async function fetchQr() {
-            const base64 = await invoke("generate_qr_code");
+            const base64: SetStateAction<string> = await invoke("generate_qr_code");
             setQrBase64(base64);
         }
         fetchQr();
@@ -85,6 +85,7 @@ function ConnectionInterface() {
                     >
                         Cancel
                     </button>
+                    <input type="file", onClick={}>
                 </div>
             )}
         </main>
