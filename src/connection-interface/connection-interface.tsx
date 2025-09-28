@@ -85,7 +85,6 @@ function ConnectionInterface() {
                     >
                         Cancel
                     </button>
-                    <input type="file", onClick={}>
                 </div>
             )}
         </main>
