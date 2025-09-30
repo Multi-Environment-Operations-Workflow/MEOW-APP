@@ -21,7 +21,7 @@ pub async fn start_websocket_server(on_event: Channel<String>) {
         port = port
     );
     println!("{}", s);
-    on_event.send(s);
+    on_event.send(s).expect("TODO: panic message");
 }
 
 

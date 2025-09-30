@@ -3,6 +3,13 @@ mod client_websocket_interface;
 mod microphone;
 mod qr_service;
 
+use std::sync::Mutex;
+use futures_util::stream::{SplitSink, SplitStream};
+use tauri::Manager;
+use tokio::net::TcpStream;
+use tokio_tungstenite::{MaybeTlsStream, WebSocketStream};
+use tokio_tungstenite::tungstenite::handshake::client::Response;
+use tokio_tungstenite::tungstenite::Message;
 use crate::host_websocket_interface::start_websocket_server;
 use crate::client_websocket_interface::connect_to_websocket;
 use crate::microphone::start_recording_with_timeout;
@@ -16,6 +23,17 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+struct AppState {
+    pub client_data_stream_writer: Option<SplitSink<WebSocketStream<MaybeTlsStream<TcpStream>>, Message>>,
+    pub client_response: Option<Response>
+}
+
+impl AppState {
+    pub fn new() -> Self{
+        AppState {client_data_stream_writer: None, client_response: None}
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -24,6 +42,7 @@ pub fn run() {
             {
                 let _ = app.handle().plugin(tauri_plugin_barcode_scanner::init());
             }
+            app.manage(Mutex::new(AppState::new()));
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
