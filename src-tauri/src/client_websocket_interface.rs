@@ -28,7 +28,7 @@ impl Default for WebSocketClientState {
 pub async fn connect_to_websocket(state: State<'_, Mutex<AppState>>, connection_string: String, on_event: Channel<String>) -> Result<(), String> {
     let request = match connection_string.into_client_request() {
         Ok(req) => req,
-        Err(e) => return Err(format!("Invalid WebSocket URL: {}", e)),
+        Err(e) => {on_event.send(format!("Invalid WebSocket URL: {}", e)).expect("TODO: panic message"); return Err(format!("Invalid WebSocket URL: {}", e))},
     };
     let (stream, _res) = match connect_async(request).await {
         Ok(res) => res,
@@ -91,7 +91,7 @@ pub struct FileMessage {
 }
 
 #[tauri::command]
-pub async fn handle_file_message(file_msg: FileMessage, ws_state: tauri::State<'_, WebSocketClientState>) -> Result<(), String> {
+pub async fn handle_file_message(file_msg: FileMessage, ws_state: State<'_, WebSocketClientState>) -> Result<(), String> {
     let mut ws_writer_lock = ws_state.ws_writer.lock().await;
     if let Some(writer) = &mut *ws_writer_lock {
         print!("Handling file: {}, size: {} bytes", file_msg.file_name, file_msg.size_byte);

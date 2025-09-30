@@ -3,7 +3,7 @@ mod client_websocket_interface;
 mod microphone;
 mod qr_service;
 
-use std::sync::Mutex;
+use tokio::sync::Mutex;
 use futures_util::stream::{SplitSink, SplitStream};
 use tauri::Manager;
 use tokio::net::TcpStream;

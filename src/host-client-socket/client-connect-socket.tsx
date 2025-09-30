@@ -4,7 +4,6 @@ import {Channel, invoke} from "@tauri-apps/api/core";
 function ClientConnectSocket() {
     const [websocketData, setWebsocketData] = useState("");
     const [connectionString, setConnectionString] = useState("");
-    const [error, setError] = useState<string | null>(null);
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isConnected, setIsConnected] = useState<boolean | null>(null);
@@ -61,23 +60,17 @@ function ClientConnectSocket() {
     }, []);
 
     async function startWebsocket(input: string) {
-        setError(null);
         const connectionString = `${input}`;
-        if (!connectionString.startsWith("ws://") && !connectionString.startsWith("wss://")) {
-            setError("Invalid WebSocket URL. It should start with ws:// or wss://");
-            return;
-        }
         console.log("Connecting to:", connectionString);
-        // Pass channel as `on_event`, matching the Rust parameter name
         await invoke("connect_to_websocket", { connectionString, onEvent });
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6 gap-4">
-            <h1 className="text-2xl font-bold">Peer A - Signaling Server</h1>
+        <div>
+            <h1>Peer A - Signaling Server</h1>
 
-            <div className="flex flex-col items-stretch w-full max-w-md">
-                <label className="mb-1 text-sm font-medium text-gray-700" htmlFor="connection-input">
+            <div>
+                <label>
                     Websocket URL
                 </label>
                 <input
@@ -86,11 +79,10 @@ function ClientConnectSocket() {
                     value={connectionString}
                     onChange={(event) => setConnectionString(event.target.value)}
                     placeholder="ws://0.0.0.0:9001"
-                    className="mb-3 p-2 border border-gray-300 rounded"
                 />
                 <button
                     onClick={() => {startWebsocket(connectionString)}}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-2xl shadow-lg hover:bg-blue-700 disabled:bg-blue-300"
+                    className=""
                     disabled={!connectionString.trim()}
                 >
                     Connect
@@ -105,12 +97,10 @@ function ClientConnectSocket() {
             <div>
                 <button onClick={handleFileUpload}>Send</button>
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
-
             {websocketData && (
-                <div className="flex flex-col items-center gap-2 bg-white shadow rounded p-4 w-full max-w-md">
-                    <h2 className="text-lg font-semibold text-gray-700">Latest message</h2>
-                    <p className="text-gray-900 break-words w-full text-center">{websocketData}</p>
+                <div>
+                    <h2>Latest message</h2>
+                    <p>{websocketData}</p>
                 </div>
             )}
         </div>
