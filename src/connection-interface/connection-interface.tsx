@@ -42,7 +42,7 @@ function ConnectionInterface() {
 
     return (
         <main className="container">
-            <h1>Hej</h1>
+            <h1>Connection interface</h1>
             {qrBase64 && (
                 <img
                     width="200px"
