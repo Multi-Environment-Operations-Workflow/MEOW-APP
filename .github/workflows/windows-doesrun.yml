@@ -1,0 +1,30 @@
+name: windows-doesrun
+on: [push, pull_request]
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: src-tauri
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          profile: minimal
+
+      - name: Build + run (kill after 10 min)
+        env:
+          RUSTFLAGS: "-D warnings"
+        shell: pwsh
+        run: |
+          Start-Process cargo -ArgumentList "run --release --locked --verbose" -PassThru | Tee-Object -Variable proc
+          Start-Sleep -Seconds 660
+          if (-not $proc.HasExited) {
+            Stop-Process -Id $proc.Id -Force
+            Write-Host "Killed after 10 minutes"
+          }

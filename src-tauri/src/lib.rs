@@ -1,4 +1,4 @@
-mod bridge;
+pub mod bridge;
 mod microphone;
 mod qr_service;
 
@@ -15,10 +15,10 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|app| {
+        .setup(|_app| {
             #[cfg(mobile)]
             {
-                let _ = app.handle().plugin(tauri_plugin_barcode_scanner::init());
+                let _ = _app.handle().plugin(tauri_plugin_barcode_scanner::init());
             }
             Ok(())
         })
