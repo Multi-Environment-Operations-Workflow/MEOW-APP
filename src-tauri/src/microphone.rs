@@ -18,16 +18,11 @@ use tauri::{command, AppHandle, Manager, Runtime};
 
 type WavWriterHandle = Arc<Mutex<Option<WavWriter<BufWriter<File>>>>>;
 
-struct SafeStream(Stream);
-
-unsafe impl Send for SafeStream {}
-unsafe impl Sync for SafeStream {}
-
 struct State {
     is_recording: Arc<AtomicBool>,
     save_path: Arc<Mutex<Option<PathBuf>>>,
     writer: WavWriterHandle,
-    stream: Arc<Mutex<Option<SafeStream>>>,
+    stream: Arc<Mutex<Option<Stream>>>,
 }
 
 impl State {
@@ -128,7 +123,7 @@ pub async fn start_recording<R: Runtime>(app_handle: AppHandle<R>) -> Result<(),
 
     *state.save_path.lock().map_err(|err| err.to_string())? = Some(save_path);
     state.writer = writer;
-    *state.stream.lock().map_err(|err| err.to_string())? = Some(SafeStream(stream));
+    *state.stream.lock().map_err(|err| err.to_string())? = Some(stream);
 
     Ok(())
 }
@@ -142,7 +137,7 @@ pub async fn stop_recording() -> Result<PathBuf, String> {
     state.is_recording.store(false, Ordering::SeqCst);
 
     if let Some(stream) = state.stream.lock().map_err(|err| err.to_string())?.take() {
-        drop(stream.0);
+        drop(stream);
     }
 
     if let Some(writer) = state.writer.lock().map_err(|err| err.to_string())?.take() {
@@ -205,4 +200,3 @@ where
         }
     }
 }
-

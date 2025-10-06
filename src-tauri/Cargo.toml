@@ -43,7 +43,7 @@ tokio-tungstenite = "0.26.2"
 futures-util = "0.3.31"
 
 # Audio
-cpal = "0.15"
+cpal = "0.16"
 hound = "3.5"
 
 # Async
@@ -51,4 +51,3 @@ hound = "3.5"
 url = "2"
 [target.'cfg(any(target_os = "android", target_os = "ios"))'.dependencies]
 tauri-plugin-barcode-scanner = "2"
-
