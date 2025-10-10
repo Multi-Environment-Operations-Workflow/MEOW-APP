@@ -73,7 +73,7 @@ pub async fn start_recording<R: Runtime>(app_handle: AppHandle<R>) -> Result<(),
         .map_err(|err| err.to_string())?;
 
     let save_path = get_save_path(&app_handle)?;
-    println!("{:?}", save_path);
+    println!("save path: {:?}", save_path);
     let spec = wav_spec_from_config(&config);
     let writer = WavWriter::create(&save_path, spec).map_err(|err| err.to_string())?;
     let writer = Arc::new(Mutex::new(Some(writer)));
